@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>APK Malware Analyzer</title>
+  <style>
+    body {
+      background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      color: #3730a3;
+      margin-top: 40px;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+    }
+    form {
+      background: #fff;
+      padding: 32px 28px 20px 28px;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(55,48,163,0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 32px;
+      margin-top: 24px;
+      min-width: 320px;
+      position: relative;
+    }
+    .custom-file-input {
+      display: none;
+    }
+    .file-label {
+      display: flex;
+      align-items: center;
+      background: #eef2ff;
+      color: #3730a3;
+      border: 2px dashed #a5b4fc;
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-size: 1.08rem;
+      cursor: pointer;
+      margin-bottom: 18px;
+      transition: background 0.2s, border 0.2s;
+      font-weight: 500;
+      gap: 10px;
+    }
+    .file-label:hover {
+      background: #e0e7ff;
+      border-color: #6366f1;
+    }
+    .file-label svg {
+      width: 22px;
+      height: 22px;
+      fill: #6366f1;
+    }
+    #file-name {
+      margin-left: 8px;
+      color: #6366f1;
+      font-size: 1rem;
+      font-style: italic;
+      max-width: 180px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    button {
+      background: linear-gradient(90deg, #6366f1 0%, #818cf8 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 32px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+    }
+    button:hover {
+      background: linear-gradient(90deg, #4f46e5 0%, #6366f1 100%);
+    }
+    h2 {
+      color: #3730a3;
+      margin-bottom: 8px;
+      margin-top: 0;
+    }
+    #loading {
+      color: #6366f1;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+    #result {
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 18px 20px;
+      min-width: 320px;
+      min-height: 60px;
+      font-size: 1.08rem;
+      color: #22223b;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.04);
+      margin-bottom: 32px;
+      white-space: pre-line;
+    }
+    @media (max-width: 500px) {
+      form, #result {
+        min-width: 0;
+        width: 95vw;
+      }
+    }
+    .theme-toggle {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      background: #fff;
+      border: 2px solid #a5b4fc;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s, border 0.2s;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.08);
+      z-index: 10;
+    }
+    .theme-toggle:hover {
+      background: #e0e7ff;
+      border-color: #6366f1;
+    }
+    .theme-toggle svg {
+      width: 22px;
+      height: 22px;
+      fill: #6366f1;
+      transition: fill 0.2s;
+    }
+    body.dark {
+      background: linear-gradient(120deg, #232946 0%, #181c2f 100%);
+    }
+    body.dark h1, body.dark h2 {
+      color: #e0e7ff;
+    }
+    body.dark form {
+      background: #232946;
+      box-shadow: 0 4px 24px rgba(55,48,163,0.18);
+    }
+    body.dark .file-label {
+      background: #232946;
+      color: #a5b4fc;
+      border-color: #6366f1;
+    }
+    body.dark .file-label:hover {
+      background: #181c2f;
+      border-color: #a5b4fc;
+    }
+    body.dark .file-label svg,
+    body.dark .theme-toggle svg {
+      fill: #a5b4fc;
+    }
+    body.dark button {
+      background: linear-gradient(90deg, #232946 0%, #6366f1 100%);
+      color: #fff;
+    }
+    body.dark button:hover {
+      background: linear-gradient(90deg, #6366f1 0%, #232946 100%);
+    }
+    body.dark #loading {
+      color: #a5b4fc;
+    }
+    body.dark #result {
+      background: #181c2f;
+      color: #e0e7ff;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.12);
+    }
+    body.dark #file-name {
+      color: #a5b4fc;
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" id="themeToggle" title="Chuyển chế độ sáng/tối">
+    <svg id="themeIcon" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="5"/>
+      <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+    </svg>
+  </button>
+  <h1>Phân tích mã độc ứng dụng Android</h1>
+  <div id="guide" style="margin-bottom:10px;color:#6366f1;font-size:1.08rem;background:#eef2ff;padding:10px 18px;border-radius:8px;max-width:420px;text-align:center;">
+    Chọn file APK để kiểm tra. Hệ thống sẽ phân tích và cảnh báo nếu phát hiện mã độc.
+  </div>
+  <form id="uploadForm">
+    <label class="file-label">
+      <svg viewBox="0 0 24 24"><path d="M16.5 6.5l-9 9M9 17H7a2 2 0 0 1-2-2v-2m10-6h2a2 2 0 0 1 2 2v2m-7-7v4m0 0h4m-4 0H7" stroke="#6366f1" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Chọn file APK
+      <input class="custom-file-input" type="file" name="apkFile" id="apkFile" accept=".apk" required>
+      <span id="file-name">Chưa chọn file</span>
+    </label>
+    <button type="submit">Phân tích</button>
+  </form>
+
+  <div id="toast" style="display:none;position:fixed;top:24px;right:24px;z-index:9999;padding:14px 24px;border-radius:8px;font-size:1.08rem;font-weight:500;box-shadow:0 2px 8px rgba(99,102,241,0.12);"></div>
+  <h2>Kết quả:</h2>
+  <div id="loading" style="display: none;">⏳ Đang phân tích, vui lòng đợi...</div>
+  <div id="result-container"></div>
+
+  <script>
+    const form = document.getElementById('uploadForm');
+    const loading = document.getElementById('loading');
+    const resultContainer = document.getElementById('result-container');
+    const fileInput = document.getElementById('apkFile');
+    const fileName = document.getElementById('file-name');
+    const toast = document.getElementById('toast');
+
+    function showToast(msg, color) {
+      toast.textContent = msg;
+      toast.style.background = color;
+      toast.style.color = '#fff';
+      toast.style.display = 'block';
+      setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        fileName.textContent = this.files[0].name;
+        showToast('Đã chọn file: ' + this.files[0].name, '#6366f1');
+      } else {
+        fileName.textContent = 'Chưa chọn file';
+      }
+    });
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+      loading.style.display = 'block';
+      resultContainer.innerHTML = '';
+
+      const formData = new FormData(form);
+      try {
+        const res = await fetch('/analyze', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        loading.style.display = 'none';
+
+        if (data.status === 'ok') {
+          showToast('Phân tích thành công!', '#22c55e');
+          const r = data.data;
+          // ML verdict
+          let mlColor = '#22c55e', mlIcon = '✔️', mlText = r.ml_verdict || 'N/A';
+          if (r.ml_verdict && r.ml_verdict.toUpperCase() === 'MALICIOUS') {
+            mlColor = '#ef4444'; mlIcon = '❌';
+          } else if (r.ml_verdict && r.ml_verdict.toUpperCase() === 'SUSPICIOUS') {
+            mlColor = '#f59e42'; mlIcon = '❓';
+          }
+          let highlight = (mlColor === '#ef4444' || mlColor === '#f59e42');
+          resultContainer.innerHTML = `
+            <div style="background:${highlight?'#fff0f0':'#f1f5f9'};border-radius:8px;padding:18px 20px;box-shadow:0 2px 8px rgba(99,102,241,0.04);${highlight?'border:2px solid #ef4444;':''}">
+              <div style="font-size:1.15rem;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px;">
+                <span style="font-size:1.5rem;">${mlIcon}</span>
+                <span>Kết luận ML (Random Forest): <span style="color:${mlColor};font-weight:700;">${mlText}</span></span>
+              </div>
+              <div style="font-size:1.08rem;">Độ tin cậy ML: <b>${typeof r.ml_confidence !== 'undefined' ? (r.ml_confidence * 100).toFixed(2) + '%' : 'N/A'}</b></div>
+            </div>
+          `;
+        } else {
+          showToast('Phân tích thất bại!', '#ef4444');
+          resultContainer.innerHTML = '<div style="color:#ef4444;font-weight:600;">Phân tích thất bại.</div>';
+        }
+      } catch (err) {
+        loading.style.display = 'none';
+        showToast('Lỗi khi gửi hoặc nhận dữ liệu.', '#ef4444');
+        resultContainer.innerHTML = '<div style="color:#ef4444;font-weight:600;">Lỗi khi gửi hoặc nhận dữ liệu.</div>';
+      }
+    };
+
+    // Theme toggle
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    function setTheme(dark) {
+      document.body.classList.toggle('dark', dark);
+      if (dark) {
+        themeIcon.innerHTML = '<path d="M21.64 13.02A9 9 0 1 1 11 3a7 7 0 0 0 10.64 10.02z"/>';
+      } else {
+        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+      }
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    }
+    // Khởi tạo theme từ localStorage
+    setTheme(localStorage.getItem('theme') === 'dark');
+    themeToggle.onclick = () => {
+      const isDark = !document.body.classList.contains('dark');
+      setTheme(isDark);
+    };
+  </script>
+</body>
+</html>
