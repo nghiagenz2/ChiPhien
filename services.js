@@ -26,7 +26,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Bỏ hoàn toàn VirusTotal, chỉ dùng ML
+// Chỉ dùng ML, không còn code liên quan đến VirusTotal
 async function analyzeWithML(apkPath) {
   return new Promise((resolve, reject) => {
     const pythonProcess = spawn('python', ['ml_processor.py', apkPath]);

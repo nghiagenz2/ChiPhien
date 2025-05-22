@@ -7,9 +7,12 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def load_and_prepare_data(csv_file='training_data.csv'):
-    """Đọc và chuẩn bị dữ liệu huấn luyện"""
-    df = pd.read_csv(csv_file)
+def load_and_prepare_data(csv_file='training_data_merged.csv', nrows=5000):
+    """Đọc và chuẩn bị dữ liệu huấn luyện (chỉ lấy nrows dòng đầu)"""
+    df = pd.read_csv(csv_file, nrows=nrows, low_memory=False)
+    # Nếu không có cột 'Class', báo lỗi rõ ràng
+    if 'Class' not in df.columns:
+        raise ValueError("File CSV không có cột 'Class'. Hãy kiểm tra lại file merge!")
     # Lấy tất cả các cột trừ cột 'Class' làm feature
     X = df.drop(columns=['Class'])
     # Lấy cột 'Class' làm nhãn
@@ -87,7 +90,7 @@ def main():
     try:
         # Đọc và chuẩn bị dữ liệu
         print("Đang đọc dữ liệu...")
-        X, y = load_and_prepare_data()
+        X, y = load_and_prepare_data()  # Mặc định lấy 5000 dòng đầu
         
         # Kiểm tra lại tỷ lệ nhãn `Class` trong file CSV
         print("\nTỷ lệ nhãn `Class` trong file CSV:")
