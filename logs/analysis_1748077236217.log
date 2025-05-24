@@ -1,0 +1,8 @@
+=== Bắt đầu phân tích APK: 1748077236174.apk ===
+ERROR: 2025-05-24 16:00:36,628 - INFO - \u0110ang ph�n t�ch file: 1748077236174.apk
+ERROR: 2025-05-24 16:00:38,665 - WARNING - Requested API level 34 is larger than maximum we have, returning API level 28 instead.
+ERROR: 2025-05-24 16:00:38,671 - ERROR - L\u1ed7i trong qu� tr�nh d\u1ef1 \u0111o�n: X has 20037 features, but SimpleImputer is expecting 20036 features as input.
+ERROR: 2025-05-24 16:00:38,674 - INFO - \u0110� x�a file 1748077236174.apk
+Không tìm thấy file APK để phân tích
+
+=== Kết thúc phân tích (code: 0) ===

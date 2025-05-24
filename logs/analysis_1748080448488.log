@@ -1,0 +1,18 @@
+=== Bắt đầu phân tích APK: 1748080448455.apk ===
+ERROR: 2025-05-24 16:54:08,787 - INFO - \u0110ang ph�n t�ch file: 1748080448455.apk
+ERROR: 2025-05-24 16:54:10,053 - WARNING - Requested API level 35 is larger than maximum we have, returning API level 28 instead.
+ERROR: 2025-05-24 16:54:10,057 - WARNING - T\u1ef1 \u0111\u1ed9ng padding 138 feature 0 cho kh\u1edbp v\u1edbi model.
+ERROR: 2025-05-24 16:54:10,097 - INFO - \u0110� x�a file 1748080448455.apk
+
+Kết Quả Phân Tích:
+Phân Loại: Banking
+Độ Tin Cậy: 36.00%
+
+Xác Suất Các Lớp:
+Adware: 2.00%
+Banking: 36.00%
+SMS_MALWARE: 35.00%
+Riskware: 7.00%
+Lành Tính: 20.00%
+
+=== Kết thúc phân tích (code: 0) ===
